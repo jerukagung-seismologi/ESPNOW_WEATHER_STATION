@@ -21,7 +21,7 @@
 
 String recv_str_jsondata;
 
-StaticJsonDocument<256> doc_send;
+JsonDocument doc_send;
 
 //String apiKey1 = "1CAB7D9FTRFKIJDY"; //API Thingspeak Prototipe
 String apiKey1 = "S1VN6AN4R1QT4QMD";  //API Thingspeak Jerukagung Meteorologi
@@ -35,6 +35,9 @@ String apiKey2 = "151d25fa6b39a591ea9651f1a110e2ad";  // Jerukagung Meteorologi
 //Definisi Pin UART
 #define RXD2 16
 #define TXD2 17
+
+WiFiClient client;
+HTTPClient http;
 
 void setup() {
   Serial.begin(115200);
@@ -74,7 +77,7 @@ ReadBufferingStream bufferedSerial2(Serial2, 64);
 void Data() {
   // Recieving data (JSON) from Coordinator ESP
   if (bufferedSerial2.available()) {
-    StaticJsonDocument<256> doc_recv;
+    JsonDocument doc_recv;
     Serial2.setTimeout(5000);
     DeserializationError error = deserializeJson(doc_recv, bufferedSerial2);
     if (error == DeserializationError::Ok) { 
@@ -135,8 +138,6 @@ void Data() {
       Serial.println(he);
       Serial.println(volt);*/ 
      
-      WiFiClient client;
-      HTTPClient http;
       http.setTimeout(2000);
 
       String url1 = "http://api.thingspeak.com/update?api_key=" + apiKey1;
