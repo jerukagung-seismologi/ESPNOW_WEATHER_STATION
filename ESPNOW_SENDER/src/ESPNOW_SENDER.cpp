@@ -11,8 +11,6 @@
 uint64_t uS_TO_S_FACTOR = 1000000;  // Conversion factor for micro seconds to seconds
 uint64_t TIME_TO_SLEEP = 10; //sleep time in seconds
 
-
-// GPIO where the DS18B20 is connected to
 int ledPin = 2 ;
 Adafruit_SHT31 sht31 = Adafruit_SHT31();
 Adafruit_SHT4x sht4 = Adafruit_SHT4x();
@@ -27,7 +25,7 @@ Adafruit_MAX17048 maxlipo;
 uint8_t broadcastAddress[] = {0xD2, 0x6B, 0x27, 0x1F, 0x58, 0xBE};
 String recv_jsondata;
 String send_jsondata;
-StaticJsonDocument<180> doc_from_espnow;
+JsonDocument doc_from_espnow;
 
 esp_now_peer_info_t peerInfo;
 
@@ -44,7 +42,6 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 }
  
 void setup() {
-  //uint32_t timestamp = millis();
   // Init Serial Monitor
   Serial.begin(115200);
   pinMode(ledPin, OUTPUT);
