@@ -104,25 +104,9 @@ void setup() {
   int humidity    = (sht31.readHumidity()*100);
   int temperature2 = (temp.temperature)*100;
   int humidity2    = (humid.relative_humidity)*100;
-  //double temperature2 = (bmp.readTemperature());
   int pressure    = (bmp.readPressure());
   int volt = (maxlipo.cellVoltage()*100);
   
-  /*double calc = log(humidity / 100.0F) + ((17.625F * temperature) / (243.04F + temperature));
-  double dewpoint = (243.04F * calc / (17.625F - calc));
-
-  #define c1 -8.78469475556
-  #define c2 1.61139411
-  #define c3 2.33854883889
-  #define c4 -0.14611605
-  #define c5 -0.012308094
-  #define c6 -0.0164248277778
-  #define c7 0.002211732
-  #define c8 0.00072546
-  #define c9 -0.000003582
-  double heat = (c1 + (c2 * temperature) + (c3 * humidity) + (c4 * temperature * humidity) + (c5 * sq(temperature)) + (c6 * sq(humidity)) + (c7 * sq(temperature) * humidity) + (c8 * temperature * sq(humidity)) + (c9 * sq(temperature) * sq(humidity))); 
-  */
-
   StaticJsonDocument<180> doc_to_espnow;
   doc_to_espnow["t1"] = temperature;
   doc_to_espnow["t2"] = temperature2;
