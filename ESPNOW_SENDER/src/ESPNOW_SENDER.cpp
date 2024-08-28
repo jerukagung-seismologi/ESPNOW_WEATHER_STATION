@@ -107,7 +107,7 @@ void setup() {
   int pressure    = (bmp.readPressure());
   int volt = (maxlipo.cellVoltage()*100);
   
-  StaticJsonDocument<180> doc_to_espnow;
+  JsonDocument doc_to_espnow;
   doc_to_espnow["t1"] = temperature;
   doc_to_espnow["t2"] = temperature2;
   doc_to_espnow["h1"] = humidity;  
