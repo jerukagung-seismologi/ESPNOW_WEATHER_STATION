@@ -1,6 +1,6 @@
-#define BLYNK_TEMPLATE_ID "TMPLnpPSbLMm"
-#define BLYNK_TEMPLATE_NAME "WeatherStationESP32"
-//#define BLYNK_AUTH_TOKEN "zbWt2kx6i8-geYh2uMTULrp2YTPQbkxc"
+#define BLYNK_TEMPLATE_ID ""
+#define BLYNK_TEMPLATE_NAME ""
+//#define BLYNK_AUTH_TOKEN ""
 
 #define BLYNK_FIRMWARE_VERSION "0.3.19"
 #define BLYNK_PRINT Serial
