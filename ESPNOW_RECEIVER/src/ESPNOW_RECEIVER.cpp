@@ -9,7 +9,7 @@ uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 // Set your new MAC Address (Receiver MAC Address)
 //uint8_t newMACAddress[] = {0x7C, 0x9E, 0xBD, 0x53, 0x97, 0xF8};
 uint8_t newMACAddress[] = {0xD2, 0x6B, 0x27, 0x1F, 0x58, 0xBE};
-StaticJsonDocument<256> doc_to_espnow; // JSON Doc for Transmitting data to ESPNOW Devices
+JsonDocument doc_to_espnow; // JSON Doc for Transmitting data to ESPNOW Devices
 
 String recv_jsondata;
 
@@ -25,7 +25,7 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 }
 
 void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
-  StaticJsonDocument<256> doc_from_espnow; // JSON Doc for Receiving data from ESPNOW Devices
+  JsonDocument doc_from_espnow; // JSON Doc for Receiving data from ESPNOW Devices
   char* buff = (char*) incomingData;
   recv_jsondata = String(buff);
   Serial.print("Recieved from ESPNOW: "); Serial.println(recv_jsondata);
@@ -67,7 +67,7 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   /*Serial.print("Serailizing to Serial2: ");
   Serial.println(recv_jsondata);*/
   Serial.println(len); 
-  StaticJsonDocument<256> doc_to_Serial2;
+  JsonDocument doc_to_Serial2;
   doc_to_Serial2["temp"] = t1;
   doc_to_Serial2["temp2"] = t2;
   doc_to_Serial2["humi"] = h1; 
