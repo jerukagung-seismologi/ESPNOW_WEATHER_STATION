@@ -120,9 +120,9 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
     float press = p / 100;
     float volt = v / 100;
 
-    // Calculate dew point
-    double calc = log(tempA / 100.0F) + ((17.625F * tempA) / (243.04F + tempA));
-    double dewpoint = (243.04F * calc / (17.625F - calc));
+    // Calculate dew point based on temperature and relative humidity
+    double calc = log(humidA / 100.0F) + ((17.625F * tempA) / (243.04F + tempA));
+    double dewpoint = (243.04F * calc) / (17.625F - calc);
 
     // Display sensor data on OLED
     displaySensorData(tempA, humidA, press, dewpoint, volt);
