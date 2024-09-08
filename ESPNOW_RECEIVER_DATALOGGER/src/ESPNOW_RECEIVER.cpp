@@ -67,21 +67,25 @@ void displaySensorData(float temperature, float humidity, float pressure, float 
 
   display.print("Temp: ");
   display.print(temperature);
-  display.println(" C");
+  display.print(" ");
+  display.write(167); // Degree symbol
+  display.println("C");
 
-  display.print("Humid: ");
+  display.print("Humi: ");
   display.print(humidity);
   display.println(" %");
 
-  display.print("Pressure: ");
+  display.print("Pres: ");
   display.print(pressure);
   display.println(" hPa");
 
-  display.print("Dew Point: ");
+  display.print("Dew : ");
+  display.print(" ");
+  display.write(167); // Degree symbol
   display.print(dewpoint);
-  display.println(" C");
+  display.println("C");
 
-  display.print("Voltage: ");
+  display.print("Volt: ");
   display.print(voltage);
   display.println(" V");
 
