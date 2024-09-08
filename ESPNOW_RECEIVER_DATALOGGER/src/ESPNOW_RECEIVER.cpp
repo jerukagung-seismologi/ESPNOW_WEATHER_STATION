@@ -15,6 +15,10 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 RTC_DS3231 rtc;
 String dayStamp, timeStamp;
 
+// Timing variables
+unsigned long lastUpdateTime = 0;
+const unsigned long updateInterval = 1000; // 1 second update interval
+
 // ESP-NOW MAC Address
 uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 uint8_t newMACAddress[] = {0xD2, 0x6B, 0x27, 0x1F, 0x58, 0xBE};
@@ -22,21 +26,45 @@ uint8_t newMACAddress[] = {0xD2, 0x6B, 0x27, 0x1F, 0x58, 0xBE};
 // JSON Document for incoming ESP-NOW data
 String recv_jsondata;
 
+// Variables for storing sensor data
+float lastTemp = 0, lastHumid = 0, lastPressure = 0, lastDewpoint = 0, lastVoltage = 0;
+
+// Function to get the current timestamp
 void getTimeStamp() {
   DateTime now = rtc.now();
   timeStamp = String(now.hour()) + ":" + String(now.minute()) + ":" + String(now.second());
   dayStamp = String(now.day()) + "-" + String(now.month()) + "-" + String(now.year());
 }
 
-void displayData(float temperature, float humidity, float pressure, float dewpoint, float voltage) {
-  display.clearDisplay();
+// Function to display the time on the OLED screen
+void displayTime() {
+  // Only update the time portion of the display (top part)
+  display.fillRect(0, 0, SCREEN_WIDTH, 10, SSD1306_BLACK); // Clear only the area for time
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(0, 0);
 
   display.print("Waktu: ");
   display.println(timeStamp);
-  
+
+  display.display();
+}
+
+// Function to display sensor data on the OLED screen
+void displaySensorData(float temperature, float humidity, float pressure, float dewpoint, float voltage) {
+  // Store sensor data in variables so it can be updated without clearing the screen
+  lastTemp = temperature;
+  lastHumid = humidity;
+  lastPressure = pressure;
+  lastDewpoint = dewpoint;
+  lastVoltage = voltage;
+
+  // Update only the lower part of the display for sensor data
+  display.fillRect(0, 12, SCREEN_WIDTH, SCREEN_HEIGHT - 12, SSD1306_BLACK); // Clear only the sensor area
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 12);
+
   display.print("Temp: ");
   display.print(temperature);
   display.println(" C");
@@ -60,6 +88,7 @@ void displayData(float temperature, float humidity, float pressure, float dewpoi
   display.display();
 }
 
+// Callback function for receiving data via ESP-NOW
 void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   JsonDocument doc_from_espnow;
   char *buff = (char *)incomingData;
@@ -81,23 +110,20 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
     float temperature = (t1 + t2) / 2;
     float humidity = (h1 + h2) / 2;
     
-    float tempA = temperature/100;
-    float humidA = humidity/100;
+    float tempA = temperature / 100;
+    float humidA = humidity / 100;
 
-    float press = p/100;
-    float volt = v/100;
+    float press = p / 100;
+    float volt = v / 100;
 
-    // Calculate dew point and heat index
+    // Calculate dew point
     double calc = log(tempA / 100.0F) + ((17.625F * tempA) / (243.04F + tempA));
     double dewpoint = (243.04F * calc / (17.625F - calc));
 
-    // Get timestamp from RTC
-    getTimeStamp();
+    // Display sensor data on OLED
+    displaySensorData(tempA, humidA, press, dewpoint, volt);
 
-    // Display data on OLED
-    displayData(tempA, humidA, press, dewpoint, volt);
-
-    Serial.println("Data displayed on OLED.");
+    Serial.println("Sensor data displayed on OLED.");
   } else {
     Serial.print(F("deserializeJson() failed: "));
     Serial.println(error.f_str());
@@ -134,5 +160,15 @@ void setup() {
 }
 
 void loop() {
-  // No code needed in loop; ESP-NOW will trigger the OnDataRecv callback automatically
+  // Update the RTC display every second
+  unsigned long currentMillis = millis();
+  if (currentMillis - lastUpdateTime >= updateInterval) {
+    lastUpdateTime = currentMillis;
+
+    // Get timestamp from RTC and update the time display
+    getTimeStamp();
+    displayTime(); // Separate function to display time
+  }
+
+  // No further code needed in loop; ESP-NOW will trigger the OnDataRecv callback automatically
 }
