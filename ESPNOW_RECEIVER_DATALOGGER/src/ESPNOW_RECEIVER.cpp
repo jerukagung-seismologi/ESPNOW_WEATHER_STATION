@@ -151,8 +151,11 @@ void setup() {
     Serial.println("Couldn't find RTC");
     while (1);
   }
+  
+  // Check if RTC has lost power
   if (rtc.lostPower()) {
-    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+    Serial.println("RTC lost power, resetting time!");
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); // Reset time to compile time
   }
 
   // Initialize OLED display
